@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+        <html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Security Example</title>
+</head>
+<body>
+    <h1>Admin, welcome spring boot security page!</h1>
+    <a href="../user"><h2>Личная страница</h2></a>
+    <a href="../admin/list_users"><h2>Список пользователей</h2></a>
+    <div th:replace="includes/logout_fragment"></div>
+</body>
+</html>

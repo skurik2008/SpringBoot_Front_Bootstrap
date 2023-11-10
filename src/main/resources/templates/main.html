@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+</head>
+<body>
+<div align="center">
+    <h2>Список пользователей</h2>
+    <h3><a href="/admin/new_user">Добавить пользователя</a> </h3>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th>
+            <th>Login</th>
+            <th>Password</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="user: ${users}">
+            <td th:text="${user.getId()}"></td>
+            <td th:text="${user.getLogin()}"></td>
+            <td th:text="${user.getPassword()}"></td>
+            <td th:text="${user.getRoleValues()}"></td>
+            <td>
+                <form th:method="GET" th:action="@{/admin/edit_user}">
+                    <input type="hidden" name="id" th:value="${user.getId()}">
+                    <input type="submit" value="Изменить"/>
+                </form>
+                <form th:method="DELETE" th:action="@{/admin/delete?id={id}(id=${user.getId()})}">
+                    <input type="submit" value="Удалить"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <a href="/admin"><h3>Назад</h3></a>
+    <div th:replace="includes/logout_fragment"></div>
+</div>
+</body>
+</html>
