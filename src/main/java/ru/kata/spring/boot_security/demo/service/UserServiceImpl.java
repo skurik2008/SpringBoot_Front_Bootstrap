@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.model.MyUser;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,20 +9,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
-import ru.kata.spring.boot_security.demo.model.Role;
+
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
-public class UserAndRoleServiceImpl implements UserService, RoleService, UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserDao userDao;
-    private final RoleDao roleDao;
 
     @Autowired
-    public UserAndRoleServiceImpl(UserDao userDao, RoleDao roleDao) {
+    public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
-        this.roleDao = roleDao;
     }
 
     @Override
@@ -71,15 +67,4 @@ public class UserAndRoleServiceImpl implements UserService, RoleService, UserDet
     public MyUser getUserByName(String login) {
         return userDao.getUserByName(login);
     }
-
-    @Override
-    public List<Role> getAllRoles() {
-        return roleDao.getAllRoles();
-    }
-
-    @Override
-    public Set<Role> getRolesByIds(List<String> roles_id) {
-        return roleDao.getRolesByIdList(roles_id);
-    }
-
 }
