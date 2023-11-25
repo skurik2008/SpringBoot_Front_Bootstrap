@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+<div th:fragment="form_new_user">
+    <div class="container-fluid-center">
+        <div class="row">
+            <div class="col-md-4 offset-md-2">
+                <div class="modal-body text-center">
+                    <form id="new_user_form" th:method="POST" th:action="@{/admin/user_save}" th:object="${user_model}">
+                        <input id="id-new" type="hidden" th:field="*{id}">
+                        <h6><label for="firstName-new">First Name</label></h6>
+                        <input id="firstName-new" class="form-control" data-bs-theme="" type="text" th:field="*{firstName}">
+                        <h6><label for="lastName-new">Last Name</label></h6>
+                        <input  id="lastName-new" class="form-control" type="text" th:field="*{lastName}">
+                        <h6><label for="age-new">Age</label></h6>
+                        <input id="age-new" class="form-control" type="number" th:field="*{age}" min="1" max="127">
+                        <h6><label for="email-new">Email</label></h6>
+                        <input id="email-new" class="form-control" type="text" th:field="*{email}" required>
+                        <h6><label for="password-new">Password</label></h6>
+                        <input id="password-new" class="form-control" type="password" th:field="*{password}" required>
+                        <h6><label>Role</label></h6>
+                        <select multiple name="roles_id"  class="form-select" size="2" required>
+                            <option value="2">USER</option>
+                            <option value="1">ADMIN</option>
+                        </select>
+                        <br>
+                        <button type="input" class="btn btn-success">Add new user</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -46,8 +46,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void updateUser(MyUser user) {
-        userDao.updateUser(user);
+    public void updateUser(MyUser user, Long id_current_user) {
+        userDao.updateUser(user, id_current_user);
     }
 
     @Override
@@ -57,14 +57,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw  new UsernameNotFoundException(String.format("User c логином %s не обнаружен", username));
         }
         UserDetails us = User.builder()
-                .username(user.getUsername())
+                .username(user.getEmail())
                 .password(user.getPassword())
                 .authorities(user.getRoles()).build();
         return us;
     }
 
     @Override
-    public MyUser getUserByName(String login) {
-        return userDao.getUserByName(login);
+    public MyUser getUserByName(String email) {
+        return userDao.getUserByName(email);
     }
 }

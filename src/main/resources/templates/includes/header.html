@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+  <div th:fragment="header">
+    <header class="p-0 text-bg-dark">
+      <div class="container-fluid">
+        <div class="navbar navbar-dark bg-dark">
+                    <span class="navbar-brand">
+                        <b th:text="${user_current.getEmail()}"></b>
+                        <text>with roles:</text>
+                        <text th:text="${user_current.getRoleValues()}"></text>
+                    </span>
+          <ul class="nav navbar-nav navbar-right">
+            <a class="nav-link" href="/login">Logout</a>
+          </ul>
+        </div>
+      </div>
+    </header>
+  </div>
+</body>
+</html>

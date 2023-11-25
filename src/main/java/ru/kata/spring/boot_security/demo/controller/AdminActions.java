@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -22,52 +24,38 @@ public class AdminActions {
     }
 
     @GetMapping
-    public String adminPage() {
+    public String adminPage(@ModelAttribute("user_model") MyUser user, Model model, Principal principal) {
+        model.addAttribute("user_current", userService.getUserByName(principal.getName()));
+        List<MyUser> users = userService.getUsers();
+        model.addAttribute("users", users);
         return "admin";
     }
 
-    @GetMapping("/list_users")
-    public String mainPage(Model model) {
-        List<MyUser> users = userService.getUsers();
-        model.addAttribute("users", users);
-        return "main";
-    }
-
-    @GetMapping("/new_user")
-    public String newUser(@ModelAttribute("user") MyUser user, Model model) {
-        model.addAttribute("flag", "new");
-        model.addAttribute("allRoles", roleService.getAllRoles());
-        return "new_and_edit_user_form";
-    }
-
-    @PostMapping("user_save")
+    @PostMapping("/user_save")
     public String saveUser(@ModelAttribute("user") MyUser user,
                            @RequestParam("roles_id") List<String> roles_id) {
         user.setRoles(roleService.getRolesByIds(roles_id));
         userService.addUser(user);
-        return "redirect:/admin/list_users";
+        return "redirect:/admin";
     }
 
-    @GetMapping("edit_user")
-    public String editeUser(@RequestParam long id, Model model) {
-        model.addAttribute("flag", "edit");
-        model.addAttribute("user", userService.getUser(id));
-        model.addAttribute("allRoles", roleService.getAllRoles());
-        return "new_and_edit_user_form";
-    }
-
-    @PatchMapping("update_user")
+    @PatchMapping("/update_user")
     public String updateUser(@ModelAttribute("user") MyUser user,
-                             @RequestParam("roles_id") List<String> roles_id) {
+                             @RequestParam("role") List<String> roles_id,
+                             @RequestParam("id_current_user") Long id_current_user,
+                             Principal principal) {
         user.setRoles(roleService.getRolesByIds(roles_id));
-        userService.updateUser(user);
-        return "redirect:/admin/list_users";
+        userService.updateUser(user, id_current_user);
+        if (roleService.getRolesByIds(roles_id).stream().allMatch(role -> role.getName().contains("USER")) && principal.getName().contains(user.getEmail())) {
+            return "redirect:/user";
+        }
+        return "redirect:/admin";
     }
 
     @DeleteMapping("/delete")
     public String delUser(@RequestParam long id) {
         userService.deleteUser(id);
-        return "redirect:/admin/list_users";
+        return "redirect:/admin";
     }
 
 }

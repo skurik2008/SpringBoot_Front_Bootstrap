@@ -15,7 +15,10 @@ public class MyUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Long id;
-    private String login;
+    private String firstName;
+    private String lastName;
+    private Byte age;
+    private String email;
     private String password;
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
@@ -31,12 +34,12 @@ public class MyUser implements UserDetails {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class MyUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return getLogin();
+        return getEmail();
     }
 
     @Override
@@ -89,5 +92,29 @@ public class MyUser implements UserDetails {
         StringBuilder sb = new StringBuilder();
         this.getRoles().forEach(role -> sb.append(role.getName() + " "));
         return sb.toString();
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Byte getAge() {
+        return age;
+    }
+
+    public void setAge(Byte age) {
+        this.age = age;
     }
 }

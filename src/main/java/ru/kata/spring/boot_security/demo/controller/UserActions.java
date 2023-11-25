@@ -21,7 +21,7 @@ public class UserActions {
 
     @GetMapping()
     public String userPage(Model model, Principal principal) {
-        model.addAttribute("user", userService.getUserByName(principal.getName()));
+        model.addAttribute("user_current", userService.getUserByName(principal.getName()));
         return "user";
     }
 }
