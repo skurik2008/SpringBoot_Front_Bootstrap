@@ -1,6 +1,11 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.kata.spring.boot_security.demo.model.MyUser;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,10 +21,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserDao userDao;
+    private final ApplicationContext context;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, ApplicationContext context) {
         this.userDao = userDao;
+        this.context = context;
     }
 
     @Override
@@ -47,7 +54,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void updateUser(MyUser user, Long id_current_user) {
-        userDao.updateUser(user, id_current_user);
+        String newPassword;
+        if (user.getPassword().isEmpty()) {
+            newPassword = this.getUser(user.getId()).getPassword();
+        } else {
+            BCryptPasswordEncoder passwordEncoder = (BCryptPasswordEncoder) context.getBean("passwordEncoder");
+            newPassword = passwordEncoder.encode(user.getPassword());
+        }
+        if (user.getId() == id_current_user) {
+            UserDetails us = User.builder()
+                    .username(user.getEmail())
+                    .password(newPassword)
+                    .authorities(user.getRoles()).build();
+            SecurityContext context = SecurityContextHolder.getContext();
+            context.setAuthentication(new UsernamePasswordAuthenticationToken(us, newPassword, us.getAuthorities()));
+        }
+        user.setPassword(newPassword);
+        userDao.updateUser(user);
     }
 
     @Override

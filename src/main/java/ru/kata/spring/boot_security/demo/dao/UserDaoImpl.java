@@ -2,11 +2,6 @@ package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.MyUser;
@@ -22,8 +17,12 @@ public class UserDaoImpl implements UserDao {
     @PersistenceContext
     public EntityManager entityManager;
 
+    private final ApplicationContext context;
+
     @Autowired
-    public ApplicationContext context;
+    public UserDaoImpl(ApplicationContext context) {
+        this.context = context;
+    }
 
     @Override
     public List<MyUser> getUsers() {
@@ -49,23 +48,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void updateUser(MyUser user, Long id_current_user) {
-        String newPassword;
-        if (user.getPassword().isEmpty()) {
-            newPassword = this.getUser(user.getId()).getPassword();
-        } else {
-            BCryptPasswordEncoder passwordEncoder = (BCryptPasswordEncoder) context.getBean("passwordEncoder");
-            newPassword = passwordEncoder.encode(user.getPassword());
-        }
-        if (user.getId() == id_current_user) {
-            UserDetails us = User.builder()
-                    .username(user.getEmail())
-                    .password(newPassword)
-                    .authorities(user.getRoles()).build();
-            SecurityContext context = SecurityContextHolder.getContext();
-            context.setAuthentication(new UsernamePasswordAuthenticationToken(us, newPassword, us.getAuthorities()));
-        }
-        user.setPassword(newPassword);
+    public void updateUser(MyUser user) {
         entityManager.merge(user);
     }
 
