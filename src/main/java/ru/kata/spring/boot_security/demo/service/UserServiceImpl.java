@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,12 +20,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserDao userDao;
-    private final ApplicationContext context;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, ApplicationContext context) {
+    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
         this.userDao = userDao;
-        this.context = context;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -58,7 +57,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user.getPassword().isEmpty()) {
             newPassword = this.getUser(user.getId()).getPassword();
         } else {
-            BCryptPasswordEncoder passwordEncoder = (BCryptPasswordEncoder) context.getBean("passwordEncoder");
             newPassword = passwordEncoder.encode(user.getPassword());
         }
         if (user.getId() == id_current_user) {
